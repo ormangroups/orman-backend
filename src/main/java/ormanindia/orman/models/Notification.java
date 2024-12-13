@@ -12,10 +12,10 @@ public class Notification {
 
     @Id
     private String id;
-    private String recipientId; // ID of the recipient restaurant
-    private String message; // Notification content
-    private boolean isRead; // Read/Unread status
-    private LocalDateTime timestamp; // Time when the notification was created
+    private String recipientId;
+    private String message;
+    private boolean isRead;
+    private LocalDateTime timestamp;
 
 
 }
