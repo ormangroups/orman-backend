@@ -10,17 +10,15 @@ public class Coupon {
     @Id
     private String id;
 
-    private String code; // Unique coupon code
+    private String code;
 
-    private double discountPercentage; // Discount percentage, e.g., 10.0 for 10%
+    private double discountPercentage;
 
-    private double maxDiscountAmount; // Maximum discount amount in currency
+    private double maxDiscountAmount;
 
-    private LocalDate validFrom; // Start date of coupon validity
+    private LocalDate validFrom;
 
-    private LocalDate validUntil; // End date of coupon validity
+    private LocalDate validUntil;
 
-    private boolean isActive; // Whether the coupon is active
-
-    // Getters and Setters
+    private boolean isActive;
 }

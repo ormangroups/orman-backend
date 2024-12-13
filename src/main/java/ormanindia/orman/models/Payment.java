@@ -8,12 +8,9 @@ import ormanindia.orman.models.PaymentTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "payments")
+
 @Data
 public class Payment {
-
-    @Id
-    private String id;
 
     private double totalAmount;
 
