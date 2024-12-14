@@ -7,49 +7,49 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/paymenttransactions")
+@RequestMapping("/api/payment-transactions")
 public class PaymentTransactionController {
 
-    private final PaymentTransactionService paymentTransactionService;
-
     @Autowired
-    public PaymentTransactionController(PaymentTransactionService paymentTransactionService) {
-        this.paymentTransactionService = paymentTransactionService;
+    private PaymentTransactionService paymentTransactionService;
+
+    // Create a new payment transaction
+    @PostMapping("/{restaurantId}")
+    public ResponseEntity<PaymentTransaction> createPaymentTransaction(
+            @RequestBody PaymentTransaction paymentTransaction,
+            @PathVariable String restaurantId) {
+        PaymentTransaction createdTransaction = paymentTransactionService.createPaymentTransaction(paymentTransaction, restaurantId);
+        return ResponseEntity.ok(createdTransaction);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<PaymentTransaction> createPaymentTransaction(@RequestBody PaymentTransaction paymentTransaction) {
-        PaymentTransaction createdPaymentTransaction = paymentTransactionService.createPaymentTransaction(paymentTransaction);
-        return ResponseEntity.status(201).body(createdPaymentTransaction);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PaymentTransaction> getPaymentTransactionById(@PathVariable String id) {
-        Optional<PaymentTransaction> paymentTransaction = paymentTransactionService.getPaymentTransactionById(id);
-        return paymentTransaction.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
+    // Get all payment transactions
     @GetMapping
     public ResponseEntity<List<PaymentTransaction>> getAllPaymentTransactions() {
-        List<PaymentTransaction> paymentTransactions = paymentTransactionService.getAllPaymentTransactions();
-        return ResponseEntity.ok(paymentTransactions);
+        List<PaymentTransaction> transactions = paymentTransactionService.getAllPaymentTransactions();
+        return ResponseEntity.ok(transactions);
     }
 
+    // Update a payment transaction
     @PutMapping("/{id}")
-    public ResponseEntity<PaymentTransaction> updatePaymentTransaction(@PathVariable String id, @RequestBody PaymentTransaction paymentTransaction) {
-        PaymentTransaction updatedPaymentTransaction = paymentTransactionService.updatePaymentTransaction(id, paymentTransaction);
-        return updatedPaymentTransaction != null ? ResponseEntity.ok(updatedPaymentTransaction)
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<PaymentTransaction> updatePaymentTransaction(
+            @PathVariable String id,
+            @RequestBody PaymentTransaction paymentTransaction) {
+        PaymentTransaction updatedTransaction = paymentTransactionService.updatePaymentTransaction(id, paymentTransaction);
+        if (updatedTransaction != null) {
+            return ResponseEntity.ok(updatedTransaction);
+        }
+        return ResponseEntity.notFound().build();
     }
 
+    // Delete a payment transaction
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePaymentTransaction(@PathVariable String id) {
-        boolean deleted = paymentTransactionService.deletePaymentTransaction(id);
-        return deleted ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        boolean isDeleted = paymentTransactionService.deletePaymentTransaction(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

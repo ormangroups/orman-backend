@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -20,36 +19,53 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Notification> createNotification(@RequestBody Notification notification) {
-        Notification createdNotification = notificationService.createNotification(notification);
-        return ResponseEntity.status(201).body(createdNotification);
+    // Send notification to a single user
+    @PostMapping("/send-to-user")
+    public ResponseEntity<Notification> sendToUser(@RequestParam String recipientId, @RequestParam String message) {
+        Notification notification = notificationService.sendToUser(recipientId, message);
+        return ResponseEntity.ok(notification);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Notification> getNotificationById(@PathVariable String id) {
-        Optional<Notification> notification = notificationService.getNotificationById(id);
-        return notification.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    // Send notification to all users
+    @PostMapping("/send-to-all")
+    public ResponseEntity<List<Notification>> sendToAll(@RequestBody List<String> userIds, @RequestParam String message) {
+        List<Notification> notifications = notificationService.sendToAll(userIds, message);
+        return ResponseEntity.ok(notifications);
     }
 
-    @GetMapping
+    // Get notifications for a specific user
+    @GetMapping("/user/{recipientId}")
+    public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable String recipientId) {
+        List<Notification> notifications = notificationService.getNotificationsForUser(recipientId);
+        return ResponseEntity.ok(notifications);
+    }
+
+    // Mark notification as read
+    @PutMapping("/mark-as-read/{notificationId}")
+    public ResponseEntity<String> markAsRead(@PathVariable String notificationId) {
+        boolean success = notificationService.markAsRead(notificationId);
+        if (success) {
+            return ResponseEntity.ok("Notification marked as read.");
+        } else {
+            return ResponseEntity.badRequest().body("Notification not found.");
+        }
+    }
+
+    // Get all notifications
+    @GetMapping("/all")
     public ResponseEntity<List<Notification>> getAllNotifications() {
         List<Notification> notifications = notificationService.getAllNotifications();
         return ResponseEntity.ok(notifications);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Notification> updateNotification(@PathVariable String id, @RequestBody Notification notification) {
-        Notification updatedNotification = notificationService.updateNotification(id, notification);
-        return updatedNotification != null ? ResponseEntity.ok(updatedNotification)
-                : ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNotification(@PathVariable String id) {
-        boolean deleted = notificationService.deleteNotification(id);
-        return deleted ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
-    }
+    // Delete notification by ID
+    // @DeleteMapping("/delete/{id}")
+    // public ResponseEntity<String> deleteNotification(@PathVariable String id) {
+    //     boolean success = notificationService.deleteNotification(id);
+    //     if (success) {
+    //         return ResponseEntity.ok("Notification deleted successfully.");
+    //     } else {
+    //         return ResponseEntity.badRequest().body("Notification not found.");
+    //     }
+    // }
 }
