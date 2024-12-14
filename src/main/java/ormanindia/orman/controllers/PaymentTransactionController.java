@@ -39,12 +39,7 @@ public class PaymentTransactionController {
         return ResponseEntity.ok(paymentTransactions);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PaymentTransaction> updatePaymentTransaction(@PathVariable String id, @RequestBody PaymentTransaction paymentTransaction) {
-        PaymentTransaction updatedPaymentTransaction = paymentTransactionService.updatePaymentTransaction(id, paymentTransaction);
-        return updatedPaymentTransaction != null ? ResponseEntity.ok(updatedPaymentTransaction)
-                : ResponseEntity.notFound().build();
-    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePaymentTransaction(@PathVariable String id) {

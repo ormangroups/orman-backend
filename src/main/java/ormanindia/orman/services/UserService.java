@@ -15,30 +15,51 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createUser(User user) {
-        return userRepository.save(user);  // Just save the user and return it
+        return userRepository.save(user);
     }
 
     public Optional<User> getUserById(String id) {
-        return userRepository.findById(id);  // Return Optional<User> to handle "not found" in the controller
+        return userRepository.findById(id);
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();  // Return the list of users
+        return userRepository.findAll();
     }
 
     public User updateUser(String id, User user) {
-        if (userRepository.existsById(id)) {
-            user.setId(id);
-            return userRepository.save(user);  // Update and return the user
+        User existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser == null) {
+            return null;
         }
-        return null;  // If not found, return null
+        if (user.getUsername() != null && !user.getUsername().isEmpty()) {
+            existingUser.setUsername(user.getUsername());
+        }
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(user.getPassword());
+        }
+        if (user.getRole() != null && !user.getRole().isEmpty()) {
+            existingUser.setRole(user.getRole());
+        }
+        if (user.getRestaurants() != null && !user.getRestaurants().isEmpty()) {
+            existingUser.setRestaurants(user.getRestaurants());
+        }
+        return userRepository.save(existingUser);
     }
+
 
     public boolean deleteUser(String id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
-            return true;  // Return true if deletion is successful
+            return true;
         }
-        return false;  // Return false if not found
+        return false;
+    }
+
+    public User findUserByRestaurantId(String restaurantId) {
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRestaurants().stream()
+                        .anyMatch(restaurant -> restaurant.getId().equals(restaurantId)))
+                .findFirst()
+                .orElse(null);
     }
 }

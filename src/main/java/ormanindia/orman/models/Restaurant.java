@@ -12,6 +12,7 @@ public class Restaurant {
     private String restaurantName;
     private String restaurantAddress;
     private String contactNumber;
+    private String password;
     private String email;
     private Boolean isActive = true;
     private Payment payment;

@@ -26,13 +26,6 @@ public class NotificationService {
         return notificationRepository.findAll();
     }
 
-    public Notification updateNotification(String id, Notification notification) {
-        if (notificationRepository.existsById(id)) {
-            notification.setId(id);
-            return notificationRepository.save(notification);
-        }
-        return null;
-    }
 
     public boolean deleteNotification(String id) {
         if (notificationRepository.existsById(id)) {
