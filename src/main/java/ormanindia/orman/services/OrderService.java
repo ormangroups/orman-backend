@@ -1,10 +1,13 @@
 package ormanindia.orman.services;
 
 import ormanindia.orman.models.Order;
+import ormanindia.orman.models.Restaurant;
+import ormanindia.orman.models.Payment;
 import ormanindia.orman.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +17,35 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    // Create a new order
-    public Order createOrder(Order order) {
-        order.calculateTotalPrice();  // Make sure to calculate the total price before saving
-        return orderRepository.save(order);
+    @Autowired
+    private RestaurantService restaurantService;
+
+    // Create a new order and update restaurant payment fields
+    public Order createOrder(Order order, String restaurantId) {
+        // Set order date and calculate total price
+        order.setOrderDate(LocalDateTime.now()); // Set the current date and time for the order
+        order.calculateTotalPrice();           // Ensure the total price is calculated
+        
+        // Save the order
+        Order savedOrder = orderRepository.save(order);
+
+        // Update the restaurant's payment fields
+        Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
+        if (restaurant != null) {
+            Payment payment = restaurant.getPayment();
+            if (payment == null) {
+                payment = new Payment();
+                restaurant.setPayment(payment);
+            }
+
+            payment.setTotalAmount(payment.getTotalAmount() + order.getFinalAmount());
+            payment.setPendingAmount(payment.getPendingAmount() + order.getFinalAmount());
+            
+            // Save the updated restaurant
+            restaurantService.updateRestaurant(restaurant, restaurant.getId());
+        }
+
+        return savedOrder;
     }
 
     // Get an order by its ID
@@ -35,12 +63,13 @@ public class OrderService {
         Optional<Order> existingOrder = orderRepository.findById(id);
         if (existingOrder.isPresent()) {
             Order updatedOrder = existingOrder.get();
-            updatedOrder.setStatus(order.getStatus());  // Update only specific fields
+            // Update specific fields
+            updatedOrder.setStatus(order.getStatus());
             updatedOrder.setAppliedCoupon(order.getAppliedCoupon());
-            updatedOrder.calculateTotalPrice();  // Recalculate total price after any changes
+            updatedOrder.calculateTotalPrice();
             return orderRepository.save(updatedOrder);
         }
-        return null; // Or throw an exception based on your needs
+        throw new IllegalArgumentException("Order not found with ID: " + id);
     }
 
     // Delete an order by ID
@@ -49,6 +78,21 @@ public class OrderService {
             orderRepository.deleteById(id);
             return true;
         }
-        return false; // Could be enhanced to throw an exception if not found
+        return false;
     }
+
+    // Get orders by status
+    public List<Order> getOrdersByStatus(String status) {
+        if (status == null || status.isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
+        }
+        return orderRepository.findByStatus(status);
+    }
+
+    // Get orders within a date range
+    // public List<Order> getOrdersByDateRange(LocalDate startDate, LocalDate endDate) {
+    //     LocalDateTime startDateTime = startDate.atStartOfDay();
+    //     LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay(); // Inclusive of end date
+    //     return orderRepository.findByOrderDateBetween(startDateTime, endDateTime);
+    // }
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Document(collection = "notifications")
 @Data
+
 public class Notification {
 
     @Id

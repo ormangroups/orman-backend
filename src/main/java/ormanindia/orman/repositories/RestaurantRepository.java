@@ -5,7 +5,11 @@ import org.springframework.stereotype.Repository;
 import ormanindia.orman.models.Restaurant;
 
 
+
+
 @Repository
 public interface RestaurantRepository extends MongoRepository<Restaurant, String> {
     // Add custom query methods if needed
+    Restaurant findByid(String id);
+    
 }

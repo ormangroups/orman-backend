@@ -1,5 +1,7 @@
 package ormanindia.orman.services;
 
+import ormanindia.orman.models.OrderItem;
+import ormanindia.orman.models.Product;
 import ormanindia.orman.models.Restaurant;
 import ormanindia.orman.models.User;
 import ormanindia.orman.repositories.RestaurantRepository;
@@ -30,8 +32,8 @@ public class RestaurantService {
     }
 
 
-    public Optional<Restaurant> getRestaurantById(String id) {
-        return restaurantRepository.findById(id);
+    public Restaurant getRestaurantById(String id) {
+        return restaurantRepository.findByid(id);
     }
 
     public List<Restaurant> getAllRestaurants() {
@@ -79,7 +81,45 @@ public class RestaurantService {
         }
         return restaurantRepository.save(existingRestaurant);
     }
+    
+ public void addToFavList(String restaurantId, Product product) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        restaurant.getFavList().add(product);
+        restaurantRepository.save(restaurant);
+    }
 
+    // Remove item from favorite list
+    public void removeFromFavList(String restaurantId, Product product) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        restaurant.getFavList().remove(product);
+        restaurantRepository.save(restaurant);
+    }
+
+    // Get favorite list
+    public List<Product> getFavList(String restaurantId) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        return restaurant.getFavList();
+    }
+
+    // Add item to cart
+    public void addToCart(String restaurantId, OrderItem orderItem) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        restaurant.getCaItems().add(orderItem);
+        restaurantRepository.save(restaurant);
+    }
+
+    // Remove item from cart
+    public void removeFromCart(String restaurantId, OrderItem orderItem) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        restaurant.getCaItems().remove(orderItem);
+        restaurantRepository.save(restaurant);
+    }
+
+    // Get cart items
+    public List<OrderItem> getCartItems(String restaurantId) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        return restaurant.getCaItems();
+    }
     public boolean deleteRestaurant(String id) {
         // Check if the restaurant exists
         Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
