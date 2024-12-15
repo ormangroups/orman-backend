@@ -1,6 +1,7 @@
 package ormanindia.orman.controllers;
 
 import ormanindia.orman.models.Product;
+import ormanindia.orman.repositories.ProductRepository;
 import ormanindia.orman.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,13 +9,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
+
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    private  ProductService productService;
 
+    private ProductRepository productRepository;
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
@@ -56,5 +60,14 @@ public class ProductController {
         boolean deleted = productService.deleteProduct(id);
         return deleted ? ResponseEntity.noContent().build() // Return NO CONTENT (204) if deleted
                 : ResponseEntity.notFound().build(); // Return NOT FOUND (404) if not found
+    }
+    @GetMapping("/categories")
+    public List<String> getCategories() {
+        List<Product> products = productRepository.findAll();
+
+        return products != null ? products.stream()
+                .map(Product::getCategory) // Extract category from each product
+                .distinct() // Remove duplicates
+                .collect(Collectors.toList()) : null; // Collect the result into a list
     }
 }
