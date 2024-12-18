@@ -14,6 +14,7 @@ public class Payment {
 
     private double totalAmount;
 
+
     private double paidAmount;
 
     private double pendingAmount;

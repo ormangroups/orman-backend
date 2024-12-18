@@ -3,6 +3,8 @@ package ormanindia.orman.services;
 import ormanindia.orman.models.User;
 import ormanindia.orman.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +15,17 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    public User saveUser(User user){
+        return userRepository.save(user);
 
+    }
+
+    public User findByusername(String username){
+        return userRepository.findByusername(username);
+
+    }
     public User createUser(User user) {
+        user.setRole("USER");
         return userRepository.save(user);
     }
 

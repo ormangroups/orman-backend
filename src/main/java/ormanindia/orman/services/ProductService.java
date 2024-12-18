@@ -17,6 +17,7 @@ public class ProductService {
 
     // Create a new product
     public Product createProduct(Product product) {
+       
         if (product.isCategoryPriceConstant()) {
             // Ensure all products in this category have the same price
             List<Product> categoryProducts = productRepository.findAll()
@@ -60,6 +61,7 @@ public class ProductService {
             existingProduct.setDescription(product.getDescription() != null ? product.getDescription() : existingProduct.getDescription());
             existingProduct.setImage(product.getImage() != null ? product.getImage() : existingProduct.getImage());
             existingProduct.setAvailable(product.isAvailable());
+            existingProduct.setUnit(product.getUnit()!=null?product.getUnit() : existingProduct.getUnit());
             existingProduct.setCategoryPriceConstant(product.isCategoryPriceConstant());
 
             // Handle pricing logic

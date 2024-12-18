@@ -17,6 +17,7 @@ public class Restaurant {
     private String contactNumber;
     private String password;
     private String email;
+    private String gstin;
     private List<Product> favList=new ArrayList<>();
     private List<OrderItem> caItems=new ArrayList<>();
     private Boolean isActive = true;

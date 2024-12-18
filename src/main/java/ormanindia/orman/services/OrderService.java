@@ -4,6 +4,8 @@ import ormanindia.orman.models.Order;
 import ormanindia.orman.models.Restaurant;
 import ormanindia.orman.models.Payment;
 import ormanindia.orman.repositories.OrderRepository;
+import ormanindia.orman.repositories.RestaurantRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +21,15 @@ public class OrderService {
 
     @Autowired
     private RestaurantService restaurantService;
+    @Autowired
+    private RestaurantRepository restaurantRepository;
 
     // Create a new order and update restaurant payment fields
     public Order createOrder(Order order, String restaurantId) {
         // Set order date and calculate total price
         order.setOrderDate(LocalDateTime.now()); // Set the current date and time for the order
         order.calculateTotalPrice();           // Ensure the total price is calculated
+        order.setStatus("PENDING");
         
         // Save the order
         Order savedOrder = orderRepository.save(order);
@@ -42,7 +47,8 @@ public class OrderService {
             payment.setPendingAmount(payment.getPendingAmount() + order.getFinalAmount());
             
             // Save the updated restaurant
-            restaurantService.updateRestaurant(restaurant, restaurant.getId());
+            restaurant.getCaItems().clear();
+            restaurantRepository.save(restaurant);
         }
 
         return savedOrder;
@@ -87,6 +93,10 @@ public class OrderService {
             throw new IllegalArgumentException("Status cannot be null or empty");
         }
         return orderRepository.findByStatus(status);
+    }
+    public List<Order> getOrdersByrestaurantID(String restaurantID) {
+    
+        return orderRepository.findByrestaurantID(restaurantID);
     }
 
     // Get orders within a date range
