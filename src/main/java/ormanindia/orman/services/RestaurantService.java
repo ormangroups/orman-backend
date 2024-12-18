@@ -41,8 +41,14 @@ public class RestaurantService {
     }
 
     public Restaurant updateRestaurant(Restaurant restaurant, String id) {
+        // Find the existing restaurant
         Restaurant existingRestaurant = restaurantRepository.findById(id).orElse(null);
+    
         if (existingRestaurant != null) {
+            // Find the corresponding User entity
+            User user = userService.findByusername(existingRestaurant.getEmail());
+    
+            // Update the restaurant fields
             existingRestaurant.setRestaurantName(
                     restaurant.getRestaurantName() != null && !restaurant.getRestaurantName().isEmpty()
                             ? restaurant.getRestaurantName()
@@ -58,16 +64,26 @@ public class RestaurantService {
                             ? restaurant.getContactNumber()
                             : existingRestaurant.getContactNumber()
             );
-            existingRestaurant.setEmail(
-                    restaurant.getEmail() != null && !restaurant.getEmail().isEmpty()
-                            ? restaurant.getEmail()
-                            : existingRestaurant.getEmail()
-            );
-            existingRestaurant.setPassword(
-                    restaurant.getPassword() != null && !restaurant.getPassword().isEmpty()
-                            ? restaurant.getPassword()
-                            : existingRestaurant.getPassword()
-            );
+    
+            // Check if email is updated and update in both Restaurant and User
+            if (restaurant.getEmail() != null && !restaurant.getEmail().isEmpty()
+                    && !restaurant.getEmail().equals(existingRestaurant.getEmail())) {
+                existingRestaurant.setEmail(restaurant.getEmail());
+                if (user != null) {
+                    user.setUsername(restaurant.getEmail());
+                }
+            }
+    
+            // Check if password is updated and update in both Restaurant and User
+            if (restaurant.getPassword() != null && !restaurant.getPassword().isEmpty()
+                    && !restaurant.getPassword().equals(existingRestaurant.getPassword())) {
+                existingRestaurant.setPassword(restaurant.getPassword());
+                if (user != null) {
+                    user.setPassword(restaurant.getPassword()); // Ensure the password is hashed before saving
+                }
+            }
+    
+            // Update additional fields
             existingRestaurant.setIsActive(
                     restaurant.getIsActive() != null
                             ? restaurant.getIsActive()
@@ -78,8 +94,17 @@ public class RestaurantService {
                             ? restaurant.getPayment()
                             : existingRestaurant.getPayment()
             );
+    
+            // Save the updated User entity
+            if (user != null) {
+                userService.saveUser(user); // Save the updated User (use your User service's save method)
+            }
+    
+            // Save the updated Restaurant entity
+            return restaurantRepository.save(existingRestaurant);
+        } else {
+            throw new IllegalArgumentException("Restaurant not found with ID: " + id);
         }
-        return restaurantRepository.save(existingRestaurant);
     }
     
  public void addToFavList(String restaurantId, Product product) {
@@ -109,9 +134,18 @@ public class RestaurantService {
     }
 
     // Remove item from cart
-    public void removeFromCart(String restaurantId, OrderItem orderItem) {
+    public void removeFromCart(String restaurantId, String productId) {
+        // Find the restaurant by its ID
         Restaurant restaurant = getRestaurantById(restaurantId);
-        restaurant.getCaItems().remove(orderItem);
+
+        // Filter out the OrderItem with the matching product ID
+        restaurant.setCaItems(
+            restaurant.getCaItems().stream()
+                .filter(orderItem -> !orderItem.getProduct().getId().equals(productId))
+                .collect(Collectors.toList())
+        );
+
+        // Save the updated restaurant
         restaurantRepository.save(restaurant);
     }
 

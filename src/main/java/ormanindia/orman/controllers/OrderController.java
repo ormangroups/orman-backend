@@ -74,6 +74,12 @@ public class OrderController {
             return ResponseEntity.badRequest().build();
         }
     }
+    @GetMapping("/restaurant/{restaurantid}")
+    public List<Order> getOrdersByUser(@PathVariable String restaurantid) {
+      
+            return orderService.getOrdersByrestaurantID(restaurantid);
+    
+    }
 
     // Uncomment this method if date range filtering is required
     // @GetMapping("/date-range")

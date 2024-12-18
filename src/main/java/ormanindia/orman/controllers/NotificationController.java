@@ -19,36 +19,11 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    // Send notification to a single user
-    @PostMapping("/send-to-user")
-    public ResponseEntity<Notification> sendToUser(@RequestParam String recipientId, @RequestParam String message) {
-        Notification notification = notificationService.sendToUser(recipientId, message);
+    // Create a new notification
+    @PostMapping
+    public ResponseEntity<Notification> createNotification(@RequestBody Notification notification) {
+        notification=notificationService.createNotification(notification);
         return ResponseEntity.ok(notification);
-    }
-
-    // Send notification to all users
-    @PostMapping("/send-to-all")
-    public ResponseEntity<List<Notification>> sendToAll(@RequestBody List<String> userIds, @RequestParam String message) {
-        List<Notification> notifications = notificationService.sendToAll(userIds, message);
-        return ResponseEntity.ok(notifications);
-    }
-
-    // Get notifications for a specific user
-    @GetMapping("/user/{recipientId}")
-    public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable String recipientId) {
-        List<Notification> notifications = notificationService.getNotificationsForUser(recipientId);
-        return ResponseEntity.ok(notifications);
-    }
-
-    // Mark notification as read
-    @PutMapping("/mark-as-read/{notificationId}")
-    public ResponseEntity<String> markAsRead(@PathVariable String notificationId) {
-        boolean success = notificationService.markAsRead(notificationId);
-        if (success) {
-            return ResponseEntity.ok("Notification marked as read.");
-        } else {
-            return ResponseEntity.badRequest().body("Notification not found.");
-        }
     }
 
     // Get all notifications
@@ -58,14 +33,17 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
-    // Delete notification by ID
-    // @DeleteMapping("/delete/{id}")
-    // public ResponseEntity<String> deleteNotification(@PathVariable String id) {
-    //     boolean success = notificationService.deleteNotification(id);
-    //     if (success) {
-    //         return ResponseEntity.ok("Notification deleted successfully.");
-    //     } else {
-    //         return ResponseEntity.badRequest().body("Notification not found.");
-    //     }
-    // }
+    // Get notifications by recipientId
+    @GetMapping("/user/{recipientId}")
+    public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable String recipientId) {
+        List<Notification> notifications = notificationService.getNotificationsForUser(recipientId);
+        return ResponseEntity.ok(notifications);
+    }
+
+    // Get notifications with null recipientId
+    @GetMapping("/unassigned")
+    public ResponseEntity<List<Notification>> getUnassignedNotifications() {
+        List<Notification> notifications = notificationService.getUnassignedNotifications();
+        return ResponseEntity.ok(notifications);
+    }
 }

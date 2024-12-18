@@ -15,6 +15,7 @@ public class Product {
     private String description;
     private Double price;
     private String image;
+    private String unit;
     private boolean isAvailable;
     private boolean isCategoryPriceConstant;
 

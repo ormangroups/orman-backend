@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -15,14 +17,11 @@ import java.util.stream.Collectors;
 
 @RequestMapping("/api/products")
 public class ProductController {
-
-    private  ProductService productService;
-
-    private ProductRepository productRepository;
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private  ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
+   
 
     // Create a new Product
     @PostMapping("/create")
@@ -63,11 +62,16 @@ public class ProductController {
     }
     @GetMapping("/categories")
     public List<String> getCategories() {
+        // Fetch all products
         List<Product> products = productRepository.findAll();
 
+        // Extract distinct categories using Java Streams
         return products != null ? products.stream()
-                .map(Product::getCategory) // Extract category from each product
-                .distinct() // Remove duplicates
-                .collect(Collectors.toList()) : null; // Collect the result into a list
+                .map(Product::getCategory)       // Map each product to its category
+                .filter(Objects::nonNull)        // Ensure categories are not null (optional)
+                .distinct()                      // Get distinct categories
+                .collect(Collectors.toList())    // Collect the results into a list
+                : Collections.emptyList();       // Return empty list if products is null
     }
+
 }

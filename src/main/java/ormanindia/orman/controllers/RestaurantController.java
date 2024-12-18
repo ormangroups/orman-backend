@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/restaurants")
 public class RestaurantController {
@@ -67,6 +68,8 @@ public class RestaurantController {
         restaurantService.addToFavList(id, product);
         return ResponseEntity.ok().build();
     }
+  
+    
 
     // Remove a product from the favorite list
     @DeleteMapping("/{id}/favorites")
@@ -81,7 +84,7 @@ public class RestaurantController {
         List<Product> favoriteList = restaurantService.getFavList(id);
         return ResponseEntity.ok(favoriteList);
     }
-
+   
     // Add an item to the cart
     @PostMapping("/{id}/cart")
     public ResponseEntity<Void> addToCart(@PathVariable String id, @RequestBody OrderItem orderItem) {
@@ -90,11 +93,14 @@ public class RestaurantController {
     }
 
     // Remove an item from the cart
-    @DeleteMapping("/{id}/cart")
-    public ResponseEntity<Void> removeFromCart(@PathVariable String id, @RequestBody OrderItem orderItem) {
-        restaurantService.removeFromCart(id, orderItem);
-        return ResponseEntity.ok().build();
-    }
+   @DeleteMapping("/{restaurantId}/{productId}")
+public ResponseEntity<Void> removeFromCart(
+        @PathVariable String restaurantId,
+        @PathVariable String productId) {
+    restaurantService.removeFromCart(restaurantId, productId);
+    return ResponseEntity.ok().build();
+}
+
 
     // Get cart items
     @GetMapping("/{id}/cart")

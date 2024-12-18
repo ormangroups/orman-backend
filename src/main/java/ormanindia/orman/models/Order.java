@@ -21,6 +21,7 @@ public class Order {
     private List<OrderItem> items;
 
     private LocalDateTime orderDate;
+    private String restaurantID;
 
     private double totalPrice;
 
