@@ -1,9 +1,13 @@
 # Stage 1: Build the application
 FROM maven:3.8.6-openjdk-11 AS builder
 
-# Set JAVA_HOME to ensure the correct JDK version is used during the build
+# Set JAVA_HOME explicitly
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Print Java version to ensure that JAVA_HOME is set correctly
+RUN java -version
+RUN echo $JAVA_HOME
 
 # Set the working directory
 WORKDIR /app
