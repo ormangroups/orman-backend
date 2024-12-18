@@ -1,8 +1,8 @@
 # Stage 1: Build the application
-FROM maven:3.8.6-openjdk-17 AS builder
+FROM maven:3.8.6-openjdk-11 AS builder
 
 # Set JAVA_HOME to ensure the correct JDK version is used during the build
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Set the working directory
