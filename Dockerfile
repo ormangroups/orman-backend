@@ -20,10 +20,10 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the builder stage to the final image
-COPY --from=builder /app/target/Hotel-Managment-0.0.1-SNAPSHOT.jar /app/hotel-management.jar
+COPY --from=builder /app/target/orman-backend-0.0.1-SNAPSHOT.jar /app/orman-backend.jar
 
 # Expose the port your application runs on (default 8080 for Spring Boot)
 EXPOSE 8080
 
 # Define the command to run the application
-ENTRYPOINT ["java", "-jar", "/app/hotel-management.jar"]
+ENTRYPOINT ["java", "-jar", "/app/orman-backend.jar"]
