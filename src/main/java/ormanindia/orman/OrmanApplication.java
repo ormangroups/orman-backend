@@ -8,6 +8,7 @@ public class OrmanApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(OrmanApplication.class, args);
+		
 	}
 
 }
