@@ -1,11 +1,11 @@
 # Stage 1: Build the application
 FROM maven:3.8.6-openjdk-11 AS builder
 
-# Set JAVA_HOME explicitly
+# Set JAVA_HOME explicitly for Maven
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-# Print Java version to ensure that JAVA_HOME is set correctly
+# Confirm Java version and JAVA_HOME
 RUN java -version
 RUN echo $JAVA_HOME
 
@@ -16,8 +16,8 @@ WORKDIR /app
 COPY pom.xml ./
 COPY src ./src
 
-# Build the application, skip tests to speed up the build process
-RUN mvn clean package -DskipTests
+# Build the application (ensure JAVA_HOME is set inline)
+RUN JAVA_HOME=$JAVA_HOME mvn clean package -DskipTests
 
 # List files in the target directory to check if the JAR was created
 RUN ls -l /app/target/
