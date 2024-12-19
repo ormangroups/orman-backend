@@ -1,5 +1,5 @@
 # Stage 1: Build the application using Maven and OpenJDK 17
-FROM maven:3.8.8-openjdk-17 AS builder
+FROM maven:3.9.4-eclipse-temurin-17 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Stage 2: Use a lightweight OpenJDK 17 image to run the application
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-slim
 
 # Set the working directory inside the container
 WORKDIR /app
