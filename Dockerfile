@@ -1,34 +1,26 @@
-# Stage 1: Build the application
-FROM maven:3.8.8-openjdk-11 AS builder
+# Use Maven with OpenJDK 8 for building the application
+FROM maven:3.8.8-openjdk-8 AS builder
 
-# Explicitly set JAVA_HOME and PATH
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-ENV PATH=$JAVA_HOME/bin:$PATH
-
-# Validate Java and Maven installations
-RUN java -version && mvn -version
-
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy your Maven project's pom.xml and source code to the container
-COPY pom.xml ./
-COPY src ./src
+# Copy the entire project into the container
+COPY . .
 
-# Build the application
+# Build the project and skip tests
 RUN mvn clean package -DskipTests
 
-# Verify the build output
-RUN ls -l /app/target/
+# Use a lightweight JDK 8 image for running the application
+FROM openjdk:8-jdk-alpine
 
-# Stage 2: Use a lightweight OpenJDK 17 runtime for the final image
-FROM openjdk:17-jdk-slim
+# Set the working directory inside the container
+WORKDIR /app
 
-# Expose port 8080 for the Spring Boot app
+# Copy the built JAR file from the builder stage
+COPY --from=builder /app/target/Hotel-Managment-0.0.1-SNAPSHOT.jar Hotel-Management.jar
+
+# Expose the port your application will run on
 EXPOSE 8080
 
-# Copy the JAR file from the builder stage to the final image
-COPY --from=builder /app/target/orman-0.0.1-SNAPSHOT.jar /app/orman.jar
-
-# Set the entry point for the final image
-ENTRYPOINT ["java", "-jar", "/app/orman.jar"]
+# Define the command to run your application
+ENTRYPOINT ["java", "-jar", "Hotel-Management.jar"]
