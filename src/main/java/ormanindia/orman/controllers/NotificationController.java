@@ -1,6 +1,7 @@
 package ormanindia.orman.controllers;
 
 import ormanindia.orman.models.Notification;
+import ormanindia.orman.repositories.NotificationRepository;
 import ormanindia.orman.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,11 @@ import java.util.List;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
-    private final NotificationService notificationService;
+    @Autowired 
+    private NotificationService notificationService;
 
-    @Autowired
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
+   
+
 
     // Create a new notification
     @PostMapping
@@ -41,9 +41,9 @@ public class NotificationController {
     }
 
     // Get notifications with null recipientId
-    // @GetMapping("/unassigned")
-    // public ResponseEntity<List<Notification>> getUnassignedNotifications() {
-    //     List<Notification> notifications = notificationService.getUnassignedNotifications();
-    //     return ResponseEntity.ok(notifications);
-    // }
+    @GetMapping("/unassigned")
+    public ResponseEntity<List<Notification>> getUnassignedNotifications() {
+        List<Notification> notifications = notificationService.getUnassignedNotifications();
+        return ResponseEntity.ok(notifications);
+    }
 }
