@@ -36,9 +36,9 @@ public class NotificationService {
     }
 
     // Get notifications with null recipientId
-    public List<Notification> getUnassignedNotifications() {
-        return notificationRepository.findByRecipientIdIsNull();
-    }
+    // public List<Notification> getUnassignedNotifications() {
+    //     return notificationRepository.findByRecipientIdIsNull();
+    // }
 
     // Mark a notification as read
     public boolean markAsRead(String notificationId) {

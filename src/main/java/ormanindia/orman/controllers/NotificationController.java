@@ -41,9 +41,9 @@ public class NotificationController {
     }
 
     // Get notifications with null recipientId
-    @GetMapping("/unassigned")
-    public ResponseEntity<List<Notification>> getUnassignedNotifications() {
-        List<Notification> notifications = notificationService.getUnassignedNotifications();
-        return ResponseEntity.ok(notifications);
-    }
+    // @GetMapping("/unassigned")
+    // public ResponseEntity<List<Notification>> getUnassignedNotifications() {
+    //     List<Notification> notifications = notificationService.getUnassignedNotifications();
+    //     return ResponseEntity.ok(notifications);
+    // }
 }
