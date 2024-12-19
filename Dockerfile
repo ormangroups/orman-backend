@@ -1,5 +1,5 @@
-# Use Maven with OpenJDK 8 for building the application
-FROM maven:3.8.8-openjdk-8 AS builder
+# Stage 1: Build the application using Maven and OpenJDK 17
+FROM maven:3.8.8-openjdk-17 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -7,20 +7,20 @@ WORKDIR /app
 # Copy the entire project into the container
 COPY . .
 
-# Build the project and skip tests
+# Build the project, skipping tests for faster builds
 RUN mvn clean package -DskipTests
 
-# Use a lightweight JDK 8 image for running the application
-FROM openjdk:8-jdk-alpine
+# Stage 2: Use a lightweight OpenJDK 17 image to run the application
+FROM openjdk:17-jdk-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the built JAR file from the builder stage
-COPY --from=builder /app/target/Hotel-Managment-0.0.1-SNAPSHOT.jar Hotel-Management.jar
+# Copy the JAR file from the builder stage
+COPY --from=builder /app/target/orman-0.0.1-SNAPSHOT.jar orman.jar
 
-# Expose the port your application will run on
+# Expose the port your application runs on (default 8080 for Spring Boot)
 EXPOSE 8080
 
-# Define the command to run your application
-ENTRYPOINT ["java", "-jar", "Hotel-Management.jar"]
+# Define the command to run the application
+ENTRYPOINT ["java", "-jar", "orman.jar"]
