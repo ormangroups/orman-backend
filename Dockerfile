@@ -1,27 +1,34 @@
-# Use Maven with OpenJDK 17 for the build stage
-FROM maven:3.8.6-openjdk-17 AS builder
+# Stage 1: Build the application
+FROM maven:3.8.8-openjdk-11 AS builder
+
+# Explicitly set JAVA_HOME and PATH
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Validate Java and Maven installations
+RUN java -version && mvn -version
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the Maven project files
-COPY pom.xml .
+# Copy your Maven project's pom.xml and source code to the container
+COPY pom.xml ./
 COPY src ./src
 
-# Build the application, skipping tests to speed up the build process
+# Build the application
 RUN mvn clean package -DskipTests
 
-# Use OpenJDK 17 runtime for the final stage
+# Verify the build output
+RUN ls -l /app/target/
+
+# Stage 2: Use a lightweight OpenJDK 17 runtime for the final image
 FROM openjdk:17-jdk-slim
 
-# Set the working directory
-WORKDIR /app
-
-# Copy the built JAR file from the builder stage
-COPY --from=builder /app/target/*.jar app.jar
-
-# Expose the default Spring Boot port
+# Expose port 8080 for the Spring Boot app
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Copy the JAR file from the builder stage to the final image
+COPY --from=builder /app/target/orman-0.0.1-SNAPSHOT.jar /app/orman.jar
+
+# Set the entry point for the final image
+ENTRYPOINT ["java", "-jar", "/app/orman.jar"]
