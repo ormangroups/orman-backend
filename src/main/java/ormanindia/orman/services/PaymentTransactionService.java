@@ -27,6 +27,8 @@ public class PaymentTransactionService {
             payment.setPaidAmount(payment.getPaidAmount()+paymentTransaction.getAmountPaid());
             payment.setPendingAmount(payment.getPendingAmount()-paymentTransaction.getAmountPaid());
             payment.getPastSettlements().add(paymentTransaction);
+            restaurant.setPayment(payment);
+            restaurantService.updateRestaurant(restaurant,restaurantId);
 
         }
         return saved;
