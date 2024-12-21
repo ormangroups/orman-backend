@@ -22,4 +22,5 @@ public class Restaurant {
     private List<OrderItem> caItems=new ArrayList<>();
     private Boolean isActive = true;
     private Payment payment;
+    private List<OrderItem> dailyScheduledItems = new ArrayList<>();
 }

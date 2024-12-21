@@ -126,13 +126,37 @@ public class RestaurantService {
         return restaurant.getFavList();
     }
 
-    // Add item to cart
-    public void addToCart(String restaurantId, OrderItem orderItem) {
+    //Daily Scheduled Order
+    public List<OrderItem> getdailyProducts(String restaurantId) {
         Restaurant restaurant = getRestaurantById(restaurantId);
-        restaurant.getCaItems().add(orderItem);
+        return restaurant.getDailyScheduledItems();
+    }
+    public void addToDailyScheduledItems(String restaurantId, OrderItem orderItem) {
+        Restaurant restaurant = getRestaurantById(restaurantId);
+        restaurant.getDailyScheduledItems().add(orderItem);
         restaurantRepository.save(restaurant);
     }
+    
+    public void removeFromDailyScheduledItems(String restaurantId, String productId) {
+        // Find the restaurant by its ID
+        Restaurant restaurant = getRestaurantById(restaurantId);
 
+        // Filter out the OrderItem with the matching product ID
+        restaurant.setDailyScheduledItems(
+            restaurant.getDailyScheduledItems().stream()
+                .filter(orderItem -> !orderItem.getProduct().getId().equals(productId))
+                .collect(Collectors.toList())
+        );
+
+        // Save the updated restaurant
+        restaurantRepository.save(restaurant);
+    }
+// Add item to cart
+public void addToCart(String restaurantId, OrderItem orderItem) {
+    Restaurant restaurant = getRestaurantById(restaurantId);
+    restaurant.getCaItems().add(orderItem);
+    restaurantRepository.save(restaurant);
+}
     // Remove item from cart
     public void removeFromCart(String restaurantId, String productId) {
         // Find the restaurant by its ID

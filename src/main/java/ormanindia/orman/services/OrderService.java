@@ -1,12 +1,14 @@
 package ormanindia.orman.services;
 
 import ormanindia.orman.models.Order;
+import ormanindia.orman.models.OrderItem;
 import ormanindia.orman.models.Restaurant;
 import ormanindia.orman.models.Payment;
 import ormanindia.orman.repositories.OrderRepository;
 import ormanindia.orman.repositories.RestaurantRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -102,6 +104,34 @@ public class OrderService {
     
         return orderRepository.findByrestaurantID(restaurantID);
     }
+    @Scheduled(cron = "0 0 0 * * ?") 
+     public void placeDailyOrders() { 
+        List<Restaurant> restaurants = restaurantRepository.findAll(); 
+        for (Restaurant restaurant : restaurants) {
+            List<OrderItem> dailyItems = restaurant.getDailyScheduledItems();
+            if (!dailyItems.isEmpty()) {
+                    Order order = new Order();
+                    order.setRestaurantID(restaurant.getId()); 
+                    order.setOrderDate(LocalDateTime.now()); 
+                    order.setItems(dailyItems);
+                    order.setStatus("Pending"); 
+                    double totalAmount = dailyItems.stream().mapToDouble(item -> item.getPrice() * item.getQuantity()).sum(); order.setTotalPrice(totalAmount); order.setFinalAmount(totalAmount); 
+                    Order savedOrder=orderRepository.save(order); 
+                    Payment payment = restaurant.getPayment(); 
+                    if (payment == null) { 
+                        payment = new Payment(); 
+                        restaurant.setPayment(payment); 
+                    } 
+                   
+                    payment.setTotalAmount(payment.getTotalAmount() + order.getFinalAmount());
+                    payment.setPendingAmount(payment.getPendingAmount() + order.getFinalAmount());
+                    restaurantRepository.save(restaurant);
+                
+                    String emailContent = mailService.buildOrderConfirmationEmail(savedOrder);  
+                    mailService.sendEmail(restaurant.getEmail(), "Order Confirmation", emailContent);
+                }
+        }
+     }
 
     // Get orders within a date range
     // public List<Order> getOrdersByDateRange(LocalDate startDate, LocalDate endDate) {
