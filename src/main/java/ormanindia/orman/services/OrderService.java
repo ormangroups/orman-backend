@@ -52,7 +52,7 @@ public class OrderService {
             restaurant.getCaItems().clear();
             restaurantRepository.save(restaurant);
         }
-        String emailContent = mailService.buildOrderConfirmationEmail(order);  
+        String emailContent = mailService.buildOrderConfirmationEmail(savedOrder);  
         mailService.sendEmail(restaurant.getEmail(), "Order Confirmation", emailContent);
 
         return savedOrder;
