@@ -23,6 +23,8 @@ public class OrderService {
     private RestaurantService restaurantService;
     @Autowired
     private RestaurantRepository restaurantRepository;
+    @Autowired
+    MailService mailService;
 
     // Create a new order and update restaurant payment fields
     public Order createOrder(Order order, String restaurantId) {
@@ -50,6 +52,8 @@ public class OrderService {
             restaurant.getCaItems().clear();
             restaurantRepository.save(restaurant);
         }
+        String emailContent = mailService.buildOrderConfirmationEmail(order);  
+        mailService.sendEmail(restaurant.getEmail(), "Order Confirmation", emailContent);
 
         return savedOrder;
     }
