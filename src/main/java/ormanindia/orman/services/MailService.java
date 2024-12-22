@@ -75,7 +75,6 @@ public class MailService {
         <body>
             <div class="container">
                 <div class="header">
-                    <img src="https://i.imgur.com/nCjPRTB.png" alt="Company Logo">
                     <h1>Order Confirmation</h1>
                     <p>Thank you for your order!</p>
                 </div>
@@ -90,11 +89,11 @@ public class MailService {
                         <!-- Order items will be inserted here dynamically -->
                         %ORDER_ITEMS%
                     </table>
-                    <p><strong>Total:</strong> $%TOTAL_PRICE%</p>
+                    <p><strong>Total:</strong> ₹‎%TOTAL_PRICE%</p>
                 </div>
                 <div class="footer">
-                    <p>If you have any questions, feel free to <a href="mailto:customer.support@example.com">contact us</a>.</p>
-                    <p>&copy; 2024 Your Company Name</p>
+                    <p>If you have any questions, feel free to <a href="mailto:ormangroupindia@gmail.com">contact us</a>.</p>
+                    <p>&copy; 2024 ORMAN GROUP INDIA</p>
                 </div>
             </div>
         </body>
