@@ -104,7 +104,7 @@ public class OrderService {
     
         return orderRepository.findByrestaurantID(restaurantID);
     }
-    @Scheduled(cron = "0 0 0 * * ?") 
+     
      public void placeDailyOrders() { 
         List<Restaurant> restaurants = restaurantRepository.findAll(); 
         for (Restaurant restaurant : restaurants) {
