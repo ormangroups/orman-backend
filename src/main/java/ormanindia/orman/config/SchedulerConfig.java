@@ -14,7 +14,7 @@ public class SchedulerConfig {
     @Autowired
     private OrderService orderService;
 
-    @Scheduled(cron = "0 0 0 * * ?") // This cron expression means the task will run every day at midnight
+    @Scheduled(cron = "0 0 21 * * *") 
     public void scheduleDailyOrders() {
         orderService.placeDailyOrders();
     }
