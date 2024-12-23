@@ -115,7 +115,9 @@ public class OrderService {
                     order.setOrderDate(LocalDateTime.now()); 
                     order.setItems(dailyItems);
                     order.setStatus("Pending"); 
-                    double totalAmount = dailyItems.stream().mapToDouble(item -> item.getPrice() * item.getQuantity()).sum(); order.setTotalPrice(totalAmount); order.setFinalAmount(totalAmount); 
+                    double totalAmount = dailyItems.stream().mapToDouble(item -> item.getPrice()).sum();
+                order.setTotalPrice(totalAmount);
+                order.setFinalAmount(totalAmount); 
                     Order savedOrder=orderRepository.save(order); 
                     Payment payment = restaurant.getPayment(); 
                     if (payment == null) { 
