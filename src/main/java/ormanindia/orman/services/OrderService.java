@@ -114,7 +114,7 @@ public class OrderService {
                     order.setRestaurantID(restaurant.getId()); 
                     order.setOrderDate(LocalDateTime.now()); 
                     order.setItems(dailyItems);
-                    order.setStatus("Pending"); 
+                    order.setStatus("PENDING"); 
                     double totalAmount = dailyItems.stream().mapToDouble(item -> item.getPrice()).sum();
                 order.setTotalPrice(totalAmount);
                 order.setFinalAmount(totalAmount); 
