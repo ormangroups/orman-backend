@@ -14,7 +14,7 @@ public class SchedulerConfig {
     @Autowired
     private OrderService orderService;
 
-    @Scheduled(cron = "0 20 13 * * *", zone = "Asia/Kolkata") 
+    @Scheduled(cron = "0 0 19 * * *", zone = "Asia/Kolkata") 
     public void scheduleDailyOrders() {
         orderService.placeDailyOrders();
     }
