@@ -14,7 +14,7 @@ public class SchedulerConfig {
     @Autowired
     private OrderService orderService;
 
-    @Scheduled(cron = "0 0 21 * * *") 
+    @Scheduled(cron = "0 0 13 * * *") 
     public void scheduleDailyOrders() {
         orderService.placeDailyOrders();
     }
