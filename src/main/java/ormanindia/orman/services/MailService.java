@@ -93,7 +93,7 @@ public class MailService {
                 </div>
                 <div class="footer">
                     <p>If you have any questions, feel free to <a href="mailto:ormangroupindia@gmail.com">contact us</a>.</p>
-                    <p>&copy; 2024 ORMAN GROUP INDIA</p>
+                    <p>&copy; 2025 ORMAN GROUP INDIA</p>
                 </div>
             </div>
         </body>
